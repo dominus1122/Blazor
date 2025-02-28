@@ -1,0 +1,45 @@
+﻿@page "/employees/create"
+@using CrudDemo.Models
+@using CrudDemo.Services
+@inject IEmployeeService EmployeeService
+@inject NavigationManager NavigationManager
+
+<h3>Create Employee</h3>
+
+<EditForm Model="@employee" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Name</label>
+        <InputText id="name" @bind-Value="employee.Name" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="employee.Email" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="department">Department</label>
+        <InputText id="department" @bind-Value="employee.Department" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+</EditForm>
+
+@code {
+    private Employee employee = new Employee();
+
+    private async Task HandleValidSubmit()
+    {
+        await EmployeeService.CreateEmployeeAsync(employee);
+        NavigationManager.NavigateTo("/employees");
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/employees");
+    }
+}

@@ -1,0 +1,60 @@
+﻿@page "/employees/edit/{Id:int}"
+@using CrudDemo.Models
+@using CrudDemo.Services
+@inject IEmployeeService EmployeeService
+@inject NavigationManager NavigationManager
+
+<h3>Edit Employee</h3>
+
+@if (employee == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="@employee" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <InputText id="name" @bind-Value="employee.Name" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <InputText id="email" @bind-Value="employee.Email" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label for="department">Department</label>
+            <InputText id="department" @bind-Value="employee.Department" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Employee employee;
+
+    protected override async Task OnInitializedAsync()
+    {
+        employee = await EmployeeService.GetEmployeeByIdAsync(Id);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await EmployeeService.UpdateEmployeeAsync(employee);
+        NavigationManager.NavigateTo("/employees");
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/employees");
+    }
+}
